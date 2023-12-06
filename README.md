@@ -12,5 +12,7 @@ Usage notes: <br>
 1. NASA Earthdata account is required to download ICESat-2 data and Google Earth Engine needs to authenticated. <br>
 2. Fill in the 'inputs' section in example.py. Make sure to set the paths for dependencies correct. <br>
 3. Run the 'example.py'. <br>
+4. All the data will be saved in the path provided. In this case, in Example folder. Building-level data is in the file 'city.gpkg' ('Austin.gpkg' in the example). <br>
+5. Follow the text file provided to ingest data into WRF-Urban to run the multi-layer BEP-BEM model.
 
 
