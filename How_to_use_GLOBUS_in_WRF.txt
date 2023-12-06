@@ -1,0 +1,78 @@
+## How to run BEP-BEM model in WRF using UT-GLOBUS ##
+
+1. Change the name of the binary files 'ufrac' and 'urb_param' inside 'urb_fra' and 'GLOBUS_morph' folders, respectively to 00001-tile_x.00001-tile_y.
+Values for tile_x and tile_y can be found in the index file inside the 'urb_fra' and 'GLOBUS_morph' folders. Make sure to append zeros before tile_x and tile_y values to make 5 digits. 
+Ex: tile_x = 260 and tile_y = 219; Then the binary files should be renamed as 00001-00260.00001-00209 
+
+2. Copy the 'urb_fra' and 'GLOBUS_morph' folders to WRF static data directory.
+
+3. Change the paths to 'URB_PARAM' and 'FRC_URB2D' variables inside GEOGRID.TBL file as follows:
+
+===============================
+name=URB_PARAM
+        priority=1
+        optional=yes
+        dest_type=continuous
+        fill_missing = 0.
+        z_dim_name=num_urb_params
+        interp_option=default:nearest_neighbor
+        abs_path= Your_WPS_static_data_folder/GLOBUS_morph/
+        flag_in_output=FLAG_URB_PARAM
+===============================
+name=FRC_URB2D
+        priority=1
+        optional=yes
+        dest_type=continuous
+        fill_missing = 0.
+        interp_option=default:nearest_neighbor
+        abs_path= Your_WPS_static_data_folder/urb_fra/
+        flag_in_output=FLAG_FRC_URB2D
+===============================
+
+4. Run geogrid.exe. If the domain covers the chosen city:
+ -- 'FRC_URB2D' variable will show the urban fraction.
+ -- 'URB_PARAM[91,:,:]' will show the plan area fraction.
+ -- 'URB_PARAM[94,:,:]' will show the area averaged building heights.
+ -- 'URB_PARAM[95,:,:]' will show the building surface to total area fraction.
+ -- 'URB_PARAM[118-132,:,:]' will show the building height histograms with 5-meter bin size.
+
+5. If you see the data in 'FRC_URB2D' and 'URB_PARAM' variables after running the geogrid.exe, GLOBUS data is ingested in WPS and you can continue with ungrib and metgrid as usual.
+
+6. For running the model over the domain area which covers more that one city, UT-GLOBUS UCPs can be stitched together. For instance, if two cities are covered in the domain, step number 3 should be modified as follows:
+
+===============================
+name=URB_PARAM
+        priority=1
+        dest_type=continuous
+        fill_missing = 0.
+        z_dim_name=num_urb_params
+        interp_option=default:nearest_neighbor
+        abs_path=Your_WPS_static_data_folder/GLOBUS_morph_for_city-1/             
+	flag_in_output=FLAG_URB_PARAM
+===============================
+name=FRC_URB2D
+        priority=1
+        dest_type=continuous
+        fill_missing = 0.
+        interp_option=default:nearest_neighbor
+        abs_path= Your_WPS_static_data_folder/urb_fra_for_city-1/
+        flag_in_output=FLAG_FRC_URB2D
+===============================
+name=URB_PARAM
+        priority=2
+        dest_type=continuous
+        fill_missing = 0.
+        z_dim_name=num_urb_params
+        interp_option=default:nearest_neighbor
+        abs_path= Your_WPS_static_data_folder/GLOBUS_morph_for_city-2/
+===============================
+name=FRC_URB2D
+        priority=2
+        dest_type=continuous
+        fill_missing = 0.
+        interp_option=default:nearest_neighbor
+        abs_path= Your_WPS_static_data_folder/urb_fra_for_city-2/
+===============================
+
+
+
